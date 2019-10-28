@@ -5,6 +5,7 @@ import './App.css';
 import { createId } from './utils/id.js';
 
 // import StepNames from './components/StepNames.js';
+import Fieldset from './components/Fieldset.js';
 
 const STEPS = [
   `names`,
@@ -74,8 +75,6 @@ class App extends React.Component {
         });
       }
 
-      console.log(`Errors`, errors);
-
       reject({
         errors,
       });
@@ -106,14 +105,9 @@ class App extends React.Component {
     }));
   };
 
-  handleChange = event => {
-    const {
-      name,
-      value,
-    } = event.target;
-
+  handleChange = ({ id, value }) => {
     this.setState({
-      [name]: value,
+      [id]: value,
       errors: [],
     });
   }
@@ -127,25 +121,9 @@ class App extends React.Component {
           {/*<StepNames names={this.state.names} />*/}
 
           <form onSubmit={this.onSubmit}>
-            <input name="name" placeholder="name" type="text" value={this.state.name} onChange={this.handleChange} ref={this.nameInput} />
-            <br/>
+            <Fieldset label="Name" id="name" placeholder="Arthur Christmas" errors={this.state.errors} onChangeCallback={this.handleChange} value={this.state.name} />
 
-            {!!this.state.errors.filter(error => error.field === `name`).length && <ul>
-              {this.state.errors.filter(error => error.field === `name`).map((error, errorIndex) => (
-                <li key={errorIndex}>{error.message}</li>
-              ))}
-            </ul>}
-
-            <br/>
-
-            <input name="email" placeholder="email" type="text" value={this.state.email} onChange={this.handleChange} />
-            <br/>
-
-            {!!this.state.errors.filter(error => error.field === `email`).length && <ul>
-              {this.state.errors.filter(error => error.field === `email`).map((error, errorIndex) => (
-                <li key={errorIndex}>{error.message}</li>
-              ))}
-            </ul>}
+            <Fieldset label="Email Address" id="email" type="email" placeholder="naughtyornice@north.pole" errors={this.state.errors} onChangeCallback={this.handleChange} value={this.state.email} />
 
             <button>Add user</button>
 
