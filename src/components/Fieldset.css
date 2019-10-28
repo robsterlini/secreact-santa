@@ -1,5 +1,6 @@
 .Fieldset {
   margin: 0 0 1rem;
+  text-align: left;
 }
 
 .Fieldset-errors {
@@ -8,5 +9,6 @@
 }
 
 .Fieldset label {
-  display: block;
+  display: inline-block;
+  margin-right: 0.5rem;
 }

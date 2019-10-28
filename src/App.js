@@ -6,19 +6,26 @@ import { createId } from './utils/id.js';
 
 // import StepNames from './components/StepNames.js';
 import Fieldset from './components/Fieldset.js';
+import Hat from './components/Hat.js';
 
-const STEPS = [
-  `names`,
-  `conditions`,
-  `draw`,
-];
+const STEPS = {
+  names: {
+    title: `Fill the hat`,
+  },
+  conditions: {
+    title: `Set the rules`,
+  },
+  draw: {
+    title: `Draw the names`,
+  },
+};
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      step: STEPS[0],
+      step: Object.keys(STEPS)[0],
       names: [],
       name: ``,
       email: ``,
@@ -115,23 +122,37 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <header>Secre(ac)t Santa</header>
+        <header>
+          <h1>Secre(ac)t Santa</h1>
+          <nav>
+            <ul>
+              {Object.keys(STEPS).map(step => (
+                <li key={step}>{`${STEPS[step].title}${step === this.state.step ? ` (current)` : ``}`}</li>
+              ))}
+            </ul>
+          </nav>
+        </header>
         <main>
 
           {/*<StepNames names={this.state.names} />*/}
 
-          <form onSubmit={this.onSubmit}>
-            <Fieldset label="Name" id="name" placeholder="Arthur Christmas" errors={this.state.errors} onChangeCallback={this.handleChange} value={this.state.name} />
+          <div>
+            <h2>Add a name to the hat…</h2>
+            <form onSubmit={this.onSubmit}>
+              <Fieldset label="Name" id="name" placeholder="Arthur Christmas" errors={this.state.errors} onChangeCallback={this.handleChange} value={this.state.name} />
 
-            <Fieldset label="Email Address" id="email" type="email" placeholder="naughtyornice@north.pole" errors={this.state.errors} onChangeCallback={this.handleChange} value={this.state.email} />
+              <Fieldset label="Email Address" id="email" type="email" placeholder="naughtyornice@north.pole" errors={this.state.errors} onChangeCallback={this.handleChange} value={this.state.email} />
 
-            <button>Add user</button>
+              <button>Add user</button>
 
-            <ul>
-            </ul>
-          </form>
+              <ul>
+              </ul>
+            </form>
+          </div>
 
-          <ul>
+          <Hat names={this.state.names} />
+
+          {/*<ul>
             {this.state.names.map((name, nameIndex) => (
               <li key={nameIndex}>
                 <strong>{name.name} ({name.id})</strong><br/>
@@ -140,9 +161,9 @@ class App extends React.Component {
                 <button onClick={() => this.removeUser(name.id)}>Remove</button>
               </li>
             ))}
-          </ul>
+          </ul>*/}
 
-          <pre>{ JSON.stringify(this.state, null, 2) }</pre>
+          <br/><br/><br/><pre>{ JSON.stringify(this.state, null, 2) }</pre>
         </main>
 
         <footer>An exploration of React by Rob Sterlini-Aitchison</footer>

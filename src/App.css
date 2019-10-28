@@ -1,22 +1,27 @@
-.App {
-  text-align: center;
+.App header,
+.App main,
+.App footer {
+  margin: 1rem auto;
+  max-width: 40rem;
+  width: 100%;
 }
 
-.App-logo {
-  height: 40vmin;
+.App footer {
+  margin-top: auto;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.App h1,
+.App h2 {
+  margin: 0.25em auto 0.5em;
+  font-weight: bold;
 }
 
-.App-link {
-  color: #09d3ac;
+.App h1 {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.App h2 {
+  font-size: 1.5em;
+  font-weight: bold;
 }

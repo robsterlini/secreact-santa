@@ -33,7 +33,7 @@ export default function Fieldset(props) {
 
   return (
     <div className="Fieldset">
-      {props.label && (<label htmlFor={props.id}>{props.label}</label>)}<br/>
+      {props.label && (<label htmlFor={props.id}>{props.label}</label>)}
 
       <input id={props.id} placeholder={props.placeholder} type="type" onChange={handleChange} value={value} />
 
