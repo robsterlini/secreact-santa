@@ -6,6 +6,12 @@ export default function Fieldset(props) {
   const [errors, setErrors] = useState(props.errors);
   const [value, setValue] = useState(props.value);
 
+  const {
+    label,
+    placeholder,
+    type = `text`,
+  } = props.field;
+
   useEffect(() => {
     setErrors(props.errors.filter(error => error.field === props.id));
 
@@ -32,9 +38,9 @@ export default function Fieldset(props) {
 
   return (
     <div className="Fieldset">
-      {props.label && (<label htmlFor={props.id}>{props.label}</label>)}
+      {label && (<label htmlFor={props.id}>{label}</label>)}
 
-      <input id={props.id} placeholder={props.placeholder} type="type" onChange={handleChange} value={value} />
+      <input id={props.id} placeholder={placeholder} type={type} onChange={handleChange} value={value} />
 
       {!!errors.length && <ul className="Fieldset-errors">
         {errors.map((error, errorIndex) => (

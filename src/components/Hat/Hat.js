@@ -21,7 +21,7 @@ export default function Hat(props) {
             <span className="m-hat__name">{name.name}</span>
             <span className="m-hat__email">{name.email}</span>
 
-            <button onClick={() => removeUser(name.id)}>Remove</button>
+            <button className="m-hat__remove" onClick={() => removeUser(name.id)}>Remove</button>
           </li>
         ))}
       </ul>)}

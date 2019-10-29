@@ -2,88 +2,15 @@ import React, { useState, useEffect } from 'react';
 
 import './App.css';
 
-import { createId } from './utils/id.js';
-import { stringIsEmail } from './utils/string.js';
-import { drawNamesIntoPairs } from './utils/draw.js';
+import { createId } from './../../utils/id.js';
+import { drawNamesIntoPairs } from './../../utils/draw.js';
+import { validateField } from './../../utils/form.js';
 
 // import StepNames from './components/StepNames.js';
-import Fieldset from './components/Fieldset.js';
-import Hat from './components/Hat.js';
+import Fieldset from './../Fieldset/Fieldset.js';
+import Hat from './../Hat/Hat.js';
 
-const prefilledData = {
-  users: [
-    {
-      id: createId(),
-      name: `Rob`,
-      email: `sterlini@fueled.com`,
-    },
-    {
-      id: createId(),
-      name: `Tom`,
-      email: `tom@fueled.com`,
-    },
-    {
-      id: createId(),
-      name: `Joe`,
-      email: `jr@fueled.com`,
-    },
-  ],
-};
-
-const STEPS = {
-  names: {
-    title: `Fill the hat`,
-  },
-  conditions: {
-    title: `Set the rules`,
-  },
-  draw: {
-    title: `Draw the names`,
-  },
-};
-
-const FIELDS = {
-  name: {
-    label: `Name`,
-    required: true,
-  },
-  email: {
-    label: `Email`,
-    required: true,
-    type: `email`,
-  },
-};
-
-const validateField = (value, field) => {
-  const errors = [];
-
-  const {
-    type = `text`,
-  } = field;
-
-  let hasValue = !!value;
-
-  if (type === `number`) {
-    hasValue = typeof(value) !== `number`;
-  }
-
-  if (hasValue) {
-    if (field.type === `email` && !stringIsEmail(value)) {
-      errors.push(`Invalid email`);
-    }
-  }
-
-  else {
-    if (field.required) {
-      errors.push(`${field.label} is required`);
-    }
-  }
-
-  return {
-    valid: !errors.length,
-    errors,
-  };
-};
+import { FIELDS, PREFILLED_DATA, STEPS } from './models.js';
 
 export default function App(props) {
   const [formFieldName, setFormFieldName] = useState(``);
@@ -92,7 +19,7 @@ export default function App(props) {
   const [formErrors, setFormErrors] = useState([]);
   const [formValid, setFormValid] = useState(false);
 
-  const [users, setUsers] = useState(prefilledData.users);
+  const [users, setUsers] = useState(PREFILLED_DATA.users);
   const [pairs, setPairs] = useState([]);
 
   const [step] = useState(Object.keys(STEPS)[0]);
@@ -185,7 +112,7 @@ export default function App(props) {
 
   const drawNames = () => {
     console.log(`DRAW NAMES`);
-    // setDrawingNames(true);
+    setDrawingNames(true);
 
     setPairs(drawNamesIntoPairs(users));
   };
@@ -202,13 +129,14 @@ export default function App(props) {
           </ul>
         </nav>
       </header>
+
       <main>
         <div>
           <h2>Add a name to the hat…</h2>
           <form onSubmit={onSubmit}>
-            <Fieldset label="Name" id="name" placeholder="Arthur Christmas" errors={formErrors} onChangeCallback={handleChange} value={formFieldName} />
+            <Fieldset field={FIELDS.name} id="name" errors={formErrors} onChangeCallback={handleChange} value={formFieldName} />
 
-            <Fieldset label="Email Address" id="email" type="email" placeholder="naughtyornice@north.pole" errors={formErrors} onChangeCallback={handleChange} value={formFieldEmail} />
+            <Fieldset field={FIELDS.email} id="email" errors={formErrors} onChangeCallback={handleChange} value={formFieldEmail} />
 
             <button disabled={!formValid || drawingNames}>Add user</button>
           </form>
