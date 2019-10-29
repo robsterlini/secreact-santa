@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import './App.css';
 
@@ -21,15 +21,66 @@ const STEPS = {
   },
 };
 
-function App(props) {
+const FIELDS = {
+  name: {
+    label: `Name`,
+    required: true,
+  },
+  email: {
+    label: `Email`,
+    required: true,
+    type: `email`,
+  },
+};
+
+const validateField = (value, field) => {
+  const errors = [];
+
+  const {
+    type = `text`,
+  } = field;
+
+  let hasValue = !!value;
+
+  if (type === `number`) {
+    hasValue = typeof(value) !== `number`;
+  }
+
+  if (hasValue) {
+    if (field.type === `email` && !stringIsEmail(value)) {
+      errors.push(`Invalid email`);
+    }
+  }
+
+  else {
+    if (field.required) {
+      errors.push(`${field.label} is required`);
+    }
+  }
+
+  return {
+    valid: !errors.length,
+    errors,
+  };
+};
+
+export default function App(props) {
   const [formFieldName, setFormFieldName] = useState(``);
   const [formFieldEmail, setFormFieldEmail] = useState(``);
 
   const [formErrors, setFormErrors] = useState([]);
+  const [formValid, setFormValid] = useState(false);
 
   const [users, setUsers] = useState([]);
 
   const [step] = useState(Object.keys(STEPS)[0]);
+
+  useEffect(() => {
+    const nameValid = validateField(formFieldName, FIELDS.name);
+    const emailValid = validateField(formFieldEmail, FIELDS.email);
+
+    setFormValid(nameValid.valid && emailValid.valid);
+  }, [formFieldName, formFieldEmail]);
 
   // const nameInput = React.createRef;
 
@@ -53,7 +104,16 @@ function App(props) {
   };
 
   const addUser = ({ name, email }) => new Promise((resolve, reject) => {
-    const errors = [];
+
+    const convertErrorsToFieldErrors = (id, errors2) => (errors2.map(error => ({
+      field: id,
+      message: error,
+    })));
+
+    const errors = [
+      ...convertErrorsToFieldErrors(`name`, validateField(name, FIELDS.name).errors),
+      ...convertErrorsToFieldErrors(`email`, validateField(email, FIELDS.email).errors),
+    ];
 
     const existingUserWithEmail = users.find(name => email === name.email);
     if (existingUserWithEmail) {
@@ -62,29 +122,6 @@ function App(props) {
         message: `Email already in use for this draw`,
       });
     }
-
-    if (!name) {
-      errors.push({
-        field: `name`,
-        message: `Name is required`,
-      });
-    }
-
-    if (!email) {
-      errors.push({
-        field: `email`,
-        message: `Email is required`,
-      });
-    }
-
-    if (!stringIsEmail(email)) {
-      errors.push({
-        field: `email`,
-        message: `Email is invalid`,
-      });
-    }
-
-    console.log(`ADD USER`, name, email, errors);
 
     if (errors.length) {
       reject({
@@ -135,9 +172,6 @@ function App(props) {
         </nav>
       </header>
       <main>
-
-        {/*<StepNames names={users} />*/}
-
         <div>
           <h2>Add a name to the hat…</h2>
           <form onSubmit={onSubmit}>
@@ -145,21 +179,17 @@ function App(props) {
 
             <Fieldset label="Email Address" id="email" type="email" placeholder="naughtyornice@north.pole" errors={formErrors} onChangeCallback={handleChange} value={formFieldEmail} />
 
-            <button>Add user</button>
-
-            <ul>
-            </ul>
+            <button disabled={!formValid}>Add user</button>
           </form>
         </div>
 
+        {/* HAT */}
         <Hat names={users} onRemoveCallback={removeUser} />
 
-        <br/><br/><br/><pre>{ JSON.stringify(``, null, 2) }</pre>
+        {/*<br/><br/><br/><pre>{ JSON.stringify(``, null, 2) }</pre>*/}
       </main>
 
       <footer>An exploration of React by Rob Sterlini-Aitchison</footer>
     </div>
   );
 }
-
-export default App;
