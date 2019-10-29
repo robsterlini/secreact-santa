@@ -150,18 +150,7 @@ class App extends React.Component {
             </form>
           </div>
 
-          <Hat names={this.state.names} />
-
-          {/*<ul>
-            {this.state.names.map((name, nameIndex) => (
-              <li key={nameIndex}>
-                <strong>{name.name} ({name.id})</strong><br/>
-                <span>{name.email}</span>
-
-                <button onClick={() => this.removeUser(name.id)}>Remove</button>
-              </li>
-            ))}
-          </ul>*/}
+          <Hat names={this.state.names} onRemoveCallback={this.removeUser} />
 
           <br/><br/><br/><pre>{ JSON.stringify(this.state, null, 2) }</pre>
         </main>
