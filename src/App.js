@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import './App.css';
 
@@ -21,46 +21,41 @@ const STEPS = {
   },
 };
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
+function App(props) {
+  const [formFieldName, setFormFieldName] = useState(``);
+  const [formFieldEmail, setFormFieldEmail] = useState(``);
 
-    this.state = {
-      step: Object.keys(STEPS)[0],
-      names: [],
-      name: ``,
-      email: ``,
-      errors: [],
-    };
+  const [formErrors, setFormErrors] = useState([]);
 
-    this.nameInput = React.createRef();
-  }
+  const [users, setUsers] = useState([]);
 
-  onSubmit = e => {
+  const [step] = useState(Object.keys(STEPS)[0]);
+
+  // const nameInput = React.createRef;
+
+  const onSubmit = e => {
     e.preventDefault();
 
-    this.addUser(this.state.name, this.state.email)
+    addUser({
+      name: formFieldName,
+      email: formFieldEmail,
+    })
       .then(() => {
-        this.nameInput.current.focus();
+        // nameInput.current.focus();
       })
       .catch(({ errors }) => {
-        this.showErrors(errors);
+        showErrors(errors);
       });
   };
 
-  showErrors = errors => {
-    this.setState(state => ({
-      errors,
-    }));
+  const showErrors = errors => {
+    setFormErrors(errors);
   };
 
-  addUser = (name, email) => new Promise((resolve, reject) => {
-    const { names } = this.state;
-
+  const addUser = ({ name, email }) => new Promise((resolve, reject) => {
     const errors = [];
 
-    const existingUserWithEmail = names.find(name => email === name.email);
-
+    const existingUserWithEmail = users.find(name => email === name.email);
     if (existingUserWithEmail) {
       errors.push({
         field: `email`,
@@ -89,6 +84,8 @@ class App extends React.Component {
       });
     }
 
+    console.log(`ADD USER`, name, email, errors);
+
     if (errors.length) {
       reject({
         errors,
@@ -97,76 +94,72 @@ class App extends React.Component {
       return;
     }
 
-    this.setState(state => {
-      const { names } = state;
-
-      names.push({
+    setUsers([
+      ...users,
+      {
         id: createId(),
         name,
         email,
-      });
+      },
+    ]);
 
-      return {
-        names,
-        name: ``,
-        email: ``,
-      };
-    });
+    setFormFieldName(``);
+    setFormFieldEmail(``);
   });
 
-  removeUser = id => {
-    this.setState(state => ({
-      names: state.names.filter(name => name.id !== id),
-    }));
+  const removeUser = id => {
+    setUsers(users.filter(name => name.id !== id));
   };
 
-  handleChange = ({ id, value }) => {
-    this.setState(({ errors }) => ({
-      [id]: value,
-      errors: errors.filter(error => error.field !== id),
-    }));
+  const handleChange = ({ id, value }) => {
+    const formSetters = {
+      name: setFormFieldName,
+      email: setFormFieldEmail,
+    };
+
+    formSetters[id](value);
+
+    setFormErrors(formErrors.filter(error => error.field !== id));
   }
 
-  render() {
-    return (
-      <div className="App">
-        <header>
-          <h1>Secre(ac)t Santa</h1>
-          <nav>
+  return (
+    <div className="App">
+      <header>
+        <h1>Secre(ac)t Santa</h1>
+        <nav>
+          <ul>
+            {Object.keys(STEPS).map(s => (
+              <li key={s}>{`${STEPS[s].title}${s === step ? ` (current)` : ``}`}</li>
+            ))}
+          </ul>
+        </nav>
+      </header>
+      <main>
+
+        {/*<StepNames names={users} />*/}
+
+        <div>
+          <h2>Add a name to the hat…</h2>
+          <form onSubmit={onSubmit}>
+            <Fieldset label="Name" id="name" placeholder="Arthur Christmas" errors={formErrors} onChangeCallback={handleChange} value={formFieldName} />
+
+            <Fieldset label="Email Address" id="email" type="email" placeholder="naughtyornice@north.pole" errors={formErrors} onChangeCallback={handleChange} value={formFieldEmail} />
+
+            <button>Add user</button>
+
             <ul>
-              {Object.keys(STEPS).map(step => (
-                <li key={step}>{`${STEPS[step].title}${step === this.state.step ? ` (current)` : ``}`}</li>
-              ))}
             </ul>
-          </nav>
-        </header>
-        <main>
+          </form>
+        </div>
 
-          {/*<StepNames names={this.state.names} />*/}
+        <Hat names={users} onRemoveCallback={removeUser} />
 
-          <div>
-            <h2>Add a name to the hat…</h2>
-            <form onSubmit={this.onSubmit}>
-              <Fieldset label="Name" id="name" placeholder="Arthur Christmas" errors={this.state.errors} onChangeCallback={this.handleChange} value={this.state.name} />
+        <br/><br/><br/><pre>{ JSON.stringify(``, null, 2) }</pre>
+      </main>
 
-              <Fieldset label="Email Address" id="email" type="email" placeholder="naughtyornice@north.pole" errors={this.state.errors} onChangeCallback={this.handleChange} value={this.state.email} />
-
-              <button>Add user</button>
-
-              <ul>
-              </ul>
-            </form>
-          </div>
-
-          <Hat names={this.state.names} onRemoveCallback={this.removeUser} />
-
-          <br/><br/><br/><pre>{ JSON.stringify(this.state, null, 2) }</pre>
-        </main>
-
-        <footer>An exploration of React by Rob Sterlini-Aitchison</footer>
-      </div>
-    );
-  }
+      <footer>An exploration of React by Rob Sterlini-Aitchison</footer>
+    </div>
+  );
 }
 
 export default App;
