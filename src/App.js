@@ -113,10 +113,10 @@ class App extends React.Component {
   };
 
   handleChange = ({ id, value }) => {
-    this.setState({
+    this.setState(({ errors }) => ({
       [id]: value,
-      errors: [],
-    });
+      errors: errors.filter(error => error.field !== id),
+    }));
   }
 
   render() {
