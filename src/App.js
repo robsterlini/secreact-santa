@@ -4,10 +4,31 @@ import './App.css';
 
 import { createId } from './utils/id.js';
 import { stringIsEmail } from './utils/string.js';
+import { drawNamesIntoPairs } from './utils/draw.js';
 
 // import StepNames from './components/StepNames.js';
 import Fieldset from './components/Fieldset.js';
 import Hat from './components/Hat.js';
+
+const prefilledData = {
+  users: [
+    {
+      id: createId(),
+      name: `Rob`,
+      email: `sterlini@fueled.com`,
+    },
+    {
+      id: createId(),
+      name: `Tom`,
+      email: `tom@fueled.com`,
+    },
+    {
+      id: createId(),
+      name: `Joe`,
+      email: `jr@fueled.com`,
+    },
+  ],
+};
 
 const STEPS = {
   names: {
@@ -71,9 +92,12 @@ export default function App(props) {
   const [formErrors, setFormErrors] = useState([]);
   const [formValid, setFormValid] = useState(false);
 
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(prefilledData.users);
+  const [pairs, setPairs] = useState([]);
 
   const [step] = useState(Object.keys(STEPS)[0]);
+
+  const [drawingNames, setDrawingNames] = useState(false);
 
   useEffect(() => {
     const nameValid = validateField(formFieldName, FIELDS.name);
@@ -159,6 +183,13 @@ export default function App(props) {
     setFormErrors(formErrors.filter(error => error.field !== id));
   }
 
+  const drawNames = () => {
+    console.log(`DRAW NAMES`);
+    // setDrawingNames(true);
+
+    setPairs(drawNamesIntoPairs(users));
+  };
+
   return (
     <div className="App">
       <header>
@@ -179,14 +210,29 @@ export default function App(props) {
 
             <Fieldset label="Email Address" id="email" type="email" placeholder="naughtyornice@north.pole" errors={formErrors} onChangeCallback={handleChange} value={formFieldEmail} />
 
-            <button disabled={!formValid}>Add user</button>
+            <button disabled={!formValid || drawingNames}>Add user</button>
           </form>
         </div>
 
         {/* HAT */}
         <Hat names={users} onRemoveCallback={removeUser} />
 
-        {/*<br/><br/><br/><pre>{ JSON.stringify(``, null, 2) }</pre>*/}
+        <button onClick={drawNames} disabled={users.length < 3 || drawingNames}>Draw names</button>
+
+        {/* Pairs */}
+        <div>
+          <ul>
+            {pairs.map(pair => (
+              <li key={pair.id}>
+                <span>{pair.giver.name}</span>
+                ->
+                <span>{pair.reciever.name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <br/><br/><br/><pre>{ JSON.stringify(pairs, null, 2) }</pre>
       </main>
 
       <footer>An exploration of React by Rob Sterlini-Aitchison</footer>
