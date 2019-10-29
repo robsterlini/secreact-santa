@@ -3,6 +3,7 @@ import React from 'react';
 import './App.css';
 
 import { createId } from './utils/id.js';
+import { stringIsEmail } from './utils/string.js';
 
 // import StepNames from './components/StepNames.js';
 import Fieldset from './components/Fieldset.js';
@@ -56,32 +57,39 @@ class App extends React.Component {
   addUser = (name, email) => new Promise((resolve, reject) => {
     const { names } = this.state;
 
+    const errors = [];
+
     const existingUserWithEmail = names.find(name => email === name.email);
 
-    if (!name || !email || existingUserWithEmail) {
-      const errors = [];
+    if (existingUserWithEmail) {
+      errors.push({
+        field: `email`,
+        message: `Email already in use for this draw`,
+      });
+    }
 
-      if (!name) {
-        errors.push({
-          field: `name`,
-          message: `Name is required`,
-        });
-      }
+    if (!name) {
+      errors.push({
+        field: `name`,
+        message: `Name is required`,
+      });
+    }
 
-      if (!email) {
-        errors.push({
-          field: `email`,
-          message: `Email is required`,
-        });
-      }
+    if (!email) {
+      errors.push({
+        field: `email`,
+        message: `Email is required`,
+      });
+    }
 
-      if (existingUserWithEmail) {
-        errors.push({
-          field: `email`,
-          message: `Email already in use for this draw`,
-        });
-      }
+    if (!stringIsEmail(email)) {
+      errors.push({
+        field: `email`,
+        message: `Email is invalid`,
+      });
+    }
 
+    if (errors.length) {
       reject({
         errors,
       });

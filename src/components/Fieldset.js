@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import './Fieldset.css';
 
 export default function Fieldset(props) {
-
   const [errors, setErrors] = useState(props.errors);
   const [value, setValue] = useState(props.value);
 
