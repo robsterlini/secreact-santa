@@ -1,13 +1,15 @@
 import React from 'react';
 
+import './Hat.scss';
+
 export default function Hat(props) {
   const removeUser = id => {
     const {
-      onRemoveCallback,
+      onRemoveUserCallback,
     } = props;
 
-    if (typeof(onRemoveCallback) === `function`) {
-      onRemoveCallback(id);
+    if (typeof(onRemoveUserCallback) === `function`) {
+      onRemoveUserCallback(id);
     }
   };
 

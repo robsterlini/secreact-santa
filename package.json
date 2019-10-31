@@ -29,6 +29,7 @@
     ]
   },
   "devDependencies": {
+    "node-sass": "^4.13.0",
     "reset-css": "^5.0.1"
   }
 }
